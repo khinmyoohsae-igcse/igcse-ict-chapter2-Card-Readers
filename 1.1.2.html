@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGCSE ICT - 2.2.1 Card Readers Quiz</title>
+    <style>
+        :root {
+            --bg-main: #090d16;
+            --bg-card: #131d31;
+            --border-color: #223354;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        header h1 {
+            color: var(--accent);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .quiz-status {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .score-pill {
+            background-color: #0c4a6e;
+            color: #7dd3fc;
+            padding: 0.35rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid #0284c7;
+        }
+
+        .card {
+            width: 100%;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            background-color: #1e293b;
+            color: var(--text-main);
+            padding: 1rem 1.25rem;
+            border-radius: 0.85rem;
+            border: 1px solid #334155;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: #283548;
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .option-btn.correct {
+            background-color: #064e3b !important;
+            border-color: #059669 !important;
+            color: #ecfdf5 !important;
+        }
+
+        .option-btn.incorrect {
+            background-color: #7f1d1d !important;
+            border-color: #dc2626 !important;
+            color: #fee2e2 !important;
+        }
+
+        .feedback-box {
+            padding: 1.15rem;
+            border-radius: 0.85rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .feedback-box.correct-feedback {
+            background-color: #022c22;
+            border: 1px solid #047857;
+            color: #a7f3d0;
+        }
+
+        .feedback-box.incorrect-feedback {
+            background-color: #450a0a;
+            border: 1px solid #b91c1c;
+            color: #fecdd3;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: #0f172a;
+            font-weight: 700;
+            padding: 0.85rem 1.75rem;
+            border-radius: 0.85rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .results-card {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .results-card h2 {
+            font-size: 2.25rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .results-card p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        footer {
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>IGCSE ICT Practice Quiz</h1>
+        <p>Topic 2.2 Direct Data Entry & 2.2.1 Card Readers</p>
+    </header>
+
+    <main>
+        <div class="quiz-status">
+            <span id="question-counter">Question 1 of 20</span>
+            <span id="score-display" class="score-pill">Score: 0</span>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="card">
+            <div id="question-box" class="question-text">
+                Loading question...
+            </div>
+
+            <div id="options-container" class="options-list">
+                <!-- Options populated dynamically -->
+            </div>
+
+            <div id="feedback-box" class="feedback-box hidden">
+                <!-- Feedback populated dynamically -->
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+                <button id="next-btn" onclick="nextQuestion()" class="btn-primary hidden">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Results Container -->
+        <div id="results-container" class="card results-card hidden">
+            <h2>Quiz Completed! 🎉</h2>
+            <p id="final-score">You scored X out of 20</p>
+            <button onclick="restartQuiz()" class="btn-primary">Restart Quiz</button>
+        </div>
+    </main>
+
+    <footer>
+        IGCSE ICT Revision &bull; Direct Data Entry Devices (Card Readers)
+    </footer>
+
+    <script>
+        const questions = [
+            {
+                question: "What is the main advantage of Direct Data Entry (DDE) devices over manual data entry methods like typing on a keyboard?",
+                options: [
+                    { text: "They significantly reduce human error and speed up data input processes", isCorrect: true, rationale: "DDE automates data capture, minimizing typos and manual entry delays." },
+                    { text: "They require continuous user typing of text commands to function", isCorrect: false, rationale: "DDE minimizes or eliminates manual typing." },
+                    { text: "They consume more electrical power than desktop computers", isCorrect: false, rationale: "Power consumption is unrelated to DDE benefits." },
+                    { text: "They convert digital files into physical paper printouts", isCorrect: false, rationale: "Printing is an output function." }
+                ]
+            },
+            {
+                question: "Which of the following is classified as a Direct Data Entry (DDE) device?",
+                options: [
+                    { text: "Magnetic stripe reader", isCorrect: true, rationale: "Magnetic stripe readers scan stored data directly from plastic cards without manual typing." },
+                    { text: "Standard QWERTY keyboard", isCorrect: false, rationale: "A keyboard is a manual data entry device." },
+                    { text: "Computer mouse", isCorrect: false, rationale: "A mouse is a manual pointing device." },
+                    { text: "Microphone", isCorrect: false, rationale: "A microphone captures audio input." }
+                ]
+            },
+            {
+                question: "What information is typically stored on the magnetic stripe found on the back of a credit or debit card?",
+                options: [
+                    { text: "Account number, cardholder name, expiry date, and security verification data", isCorrect: true, rationale: "The magnetic stripe stores vital identification data required for payment processing." },
+                    { text: "Live real-time bank account balances and user fingerprint scans", isCorrect: false, rationale: "Account balances are stored on remote bank servers, not on card stripes." },
+                    { text: "High-resolution color photographs of the cardholder", isCorrect: false, rationale: "Photos are printed on the card face, not stored magnetically." },
+                    { text: "Encrypted quantum cryptographic keys", isCorrect: false, rationale: "Quantum cryptography is an emerging technology, not magnetic stripe data." }
+                ]
+            },
+            {
+                question: "How does a magnetic stripe reader read data from a plastic card?",
+                options: [
+                    { text: "By physically swiping or inserting the card so that magnetic read heads detect the magnetic polarity pattern on the stripe", isCorrect: true, rationale: "Swiping the card past magnetic read heads induces electrical signals corresponding to the encoded data." },
+                    { text: "By shining an optical red laser beam through microscopic pits and lands", isCorrect: false, rationale: "This describes optical disc reading (CD/DVD)." },
+                    { text: "By using wireless radio frequency electromagnetic waves", isCorrect: false, rationale: "This describes RFID and contactless readers." },
+                    { text: "By pressing metallic layers together using physical touch pressure", isCorrect: false, rationale: "This describes resistive touch screens." }
+                ]
+            },
+            {
+                question: "What is a major advantage of magnetic stripe cards and readers?",
+                options: [
+                    { text: "They are inexpensive to produce, fast to swipe, and require no external power source on the card itself", isCorrect: true, rationale: "Magnetic cards are very cheap to manufacture and simple to read." },
+                    { text: "They are completely immune to data corruption from magnets", isCorrect: false, rationale: "Strong external magnetic fields can easily corrupt magnetic stripe data." },
+                    { text: "They can hold hundreds of gigabytes of high-definition video files", isCorrect: false, rationale: "Magnetic stripes have very tiny storage capacities (just a few dozen bytes)." },
+                    { text: "They never suffer from physical wear and tear", isCorrect: true.split()[0] === 'false' && true, rationale: "Frequent swiping causes physical scratching and wear on the magnetic tape." }
+                ]
+            },
+            {
+                question: "What is a major disadvantage or security vulnerability of magnetic stripe cards?",
+                options: [
+                    { text: "The data stored on the stripe can be easily read, copied, or cloned by fraudsters using skimming devices", isCorrect: true, rationale: "Magnetic stripes lack encryption, making them easy to duplicate or skim." },
+                    { text: "They require a built-in lithium battery that expires every week", isCorrect: false, rationale: "Magnetic stripe cards contain no internal electronics or batteries." },
+                    { text: "They cannot be used for hotel room key cards", isCorrect: false, rationale: "Hotel keys commonly use magnetic stripes or RFID." },
+                    { text: "They take over five minutes to swipe", isCorrect: false, rationale: "Swiping takes less than a second." }
+                ]
+            },
+            {
+                question: "Where are magnetic stripe readers commonly used in everyday environments?",
+                options: [
+                    { text: "Hotel room door locks, gym membership access gates, and older credit card payment terminals", isCorrect: true, rationale: "Magnetic stripe readers are standard for access control and traditional card swiping." },
+                    { text: "Automated greenhouse temperature regulation systems", isCorrect: false, rationale: "Greenhouses use sensors and ADCs." },
+                    { text: "Professional CAD architectural 3D rendering workstations", isCorrect: false, rationale: "CAD requires specialized mice and keyboards." },
+                    { text: "Virtual reality gaming headsets", isCorrect: false, rationale: "VR headsets use head-mounted displays and motion sensors." }
+                ]
+            },
+            {
+                question: "What is a 'Chip and PIN' reader (Smart Card reader)?",
+                options: [
+                    { text: "A device that reads data from an embedded integrated circuit (microprocessor chip) on a card and verifies the user's entered PIN", isCorrect: true, rationale: "Smart cards feature a small microchip that communicates securely with the card reader when a PIN is entered." },
+                    { text: "A scanner that reads printed barcodes on grocery items", isCorrect: false, rationale: "Barcode readers scan lines on packaging." },
+                    { text: "An optical scanner that converts books into digital text", isCorrect: false, rationale: "This is a document scanner." },
+                    { text: "A device that measures room temperature", isCorrect: false, rationale: "This is a temperature sensor." }
+                ]
+            },
+            {
+                question: "Why are Chip and PIN (Smart Card) readers considered much more secure than traditional magnetic stripe readers?",
+                options: [
+                    { text: "The embedded microchip uses advanced encryption and data processing, making card cloning and fraud extremely difficult", isCorrect: true, rationale: "Smart chips encrypt transaction data and verify PINs securely, unlike easily copied magnetic stripes." },
+                    { text: "Smart cards store thousands of gigabytes of encrypted files", isCorrect: false, rationale: "Chip storage capacity is still relatively small." },
+                    { text: "Smart cards require the user's fingerprint scan to be swiped", isCorrect: false, rationale: "Chip and PIN uses a numeric PIN, not fingerprints." },
+                    { text: "Smart cards never require a power source", isCorrect: false, rationale: "They are powered when inserted into the reader terminal." }
+                ]
+            },
+            {
+                question: "What action must a customer perform when using a Chip and PIN payment terminal to authorize a transaction?",
+                options: [
+                    { text: "Insert the card into the reader chip slot and enter their secret Personal Identification Number (PIN)", isCorrect: true, rationale: "Chip and PIN requires physical chip insertion followed by entering the correct PIN on the keypad." },
+                    { text: "Swipe the magnetic stripe quickly across the top groove", isCorrect: false, rationale: "Swiping is for magnetic stripe cards, not chip cards." },
+                    { text: "Wave the card from three feet away without touching the terminal", isCorrect: false, rationale: "Waving is for contactless RFID transactions." },
+                    { text: "Scan their retina using a built-in camera", isCorrect: false, rationale: "Retina scanning is biometric authentication." }
+                ]
+            },
+            {
+                question: "What does RFID stand for in computer data entry and identification technology?",
+                options: [
+                    { text: "Radio Frequency Identification", isCorrect: true, rationale: "RFID stands for Radio Frequency Identification, using radio waves to read data from tags." },
+                    { text: "Rapid File Identification Device", isCorrect: false, rationale: "This is incorrect terminology." },
+                    { text: "Remote Fingerprint Inspection Data", isCorrect: false, rationale: "This is incorrect." },
+                    { text: "Resistive Frequency Internal Decoder", isCorrect: false, rationale: "This is incorrect." }
+                ]
+            },
+            {
+                question: "How does an RFID reader communicate with an RFID tag?",
+                options: [
+                    { text: "Using radio frequency electromagnetic waves to transmit data wirelessly without requiring line-of-sight", isCorrect: true, rationale: "RFID readers emit radio waves that energize tags, causing them to transmit their stored identification data back." },
+                    { text: "Using visible red laser beams reflecting off microscopic pits", isCorrect: false, rationale: "This is optical disc technology." },
+                    { text: "Using physical magnetic read heads touching a metal strip", isCorrect: false, rationale: "This is magnetic stripe technology." },
+                    { text: "Using infrared light beams that require direct line-of-sight", isCorrect: false, rationale: "IR requires line-of-sight, whereas RFID works wirelessly through obstacles." }
+                ]
+            },
+            {
+                question: "What are the two main components that make up an RFID system?",
+                options: [
+                    { text: "An RFID reader (transceiver/antenna) and an RFID tag (microchip and antenna)", isCorrect: true, rationale: "An RFID setup consists of a reader broadcasting radio signals and a tag containing stored data." },
+                    { text: "An ADC converter and a DAC speaker amplifier", isCorrect: false, rationale: "These are audio/sensor converters." },
+                    { text: "A compiler and a linker", isCorrect: false, rationale: "These are programming software tools." },
+                    { text: "A flatbed scanner and an OCR software suite", isCorrect: false, rationale: "These are document scanning tools." }
+                ]
+            },
+            {
+                question: "What is the difference between passive RFID tags and active RFID tags?",
+                options: [
+                    { text: "Passive tags have no internal battery and draw power from the reader's radio signal, whereas active tags have their own internal battery and broadcast signals over greater distances", isCorrect: true, rationale: "Active tags contain batteries for long-range transmission; passive tags rely entirely on reader-induced power for short ranges." },
+                    { text: "Passive tags are volatile, whereas active tags are non-volatile.", isCorrect: false, rationale: "Volatility refers to RAM memory, not RFID tags." },
+                    { text: "Passive tags use optical laser disks, whereas active tags use magnetic tape.", isCorrect: false, rationale: "Both are radio frequency devices." },
+                    { text: "Active tags can only be read once, whereas passive tags can be rewritten infinitely.", isCorrect: false, rationale: "This is incorrect." }
+                ]
+            },
+            {
+                question: "What is a major advantage of RFID technology over traditional barcode scanning?",
+                options: [
+                    { text: "RFID tags can be read automatically from a distance without line-of-sight, and multiple tags can be read simultaneously", isCorrect: true, rationale: "RFID does not require line-of-sight and can read many items at once (bulk scanning), unlike barcodes." },
+                    { text: "RFID tags cost less than one-tenth of a cent to print on paper labels", isCorrect: false, rationale: "Barcodes printed on paper are significantly cheaper than electronic RFID microchip tags." },
+                    { text: "RFID tags never require any radio frequency signals", isCorrect: false, rationale: "RFID relies entirely on radio frequencies." },
+                    { text: "RFID tags can store full-length feature films in high definition", isCorrect: false, rationale: "Storage capacity on standard RFID tags is small." }
+                ]
+            },
+            {
+                question: "Where are RFID tags and readers commonly used in modern logistics and commerce?",
+                options: [
+                    { text: "Livestock tracking, toll road electronic passes, warehouse inventory management, and contactless retail payments", isCorrect: true, rationale: "RFID is widely used for tracking items, vehicles, livestock, and inventory automatically." },
+                    { text: "Controlling industrial car manufacturing welding robots", isCorrect: false, rationale: "Factory robots use automated controller programs." },
+                    { text: "Displaying desktop operating system windows", isCorrect: false, rationale: "Displays use monitors and GUIs." },
+                    { text: "Measuring greenhouse ambient air temperature", isCorrect: false, rationale: "Temperature uses sensors." }
+                ]
+            },
+            {
+                question: "What is a contactless card reader?",
+                options: [
+                    { text: "A reader that uses short-range RFID technology (NFC) to process payments when a card is waved near the terminal", isCorrect: true, rationale: "Contactless cards embed a small RFID/NFC chip allowing wireless tap-to-pay transactions." },
+                    { text: "A mechanical slot that requires physical card insertion and PIN entry", isCorrect: false, rationale: "Physical insertion describes Chip and PIN readers." },
+                    { text: "A magnetic swipe groove for reading card tape", isCorrect: false, rationale: "Swiping is for magnetic stripe cards." },
+                    { text: "An optical barcode scanner for retail products", isCorrect: false, rationale: "Barcode scanners read item packaging." }
+                ]
+            },
+            {
+                question: "What is a security limitation associated with contactless card payments?",
+                options: [
+                    { text: "Transactions are often permitted without entering a PIN for small amounts, meaning a stolen card could be used fraudulently until blocked", isCorrect: true, rationale: "Low-value contactless payments typically require no PIN, posing a theft risk if the card is lost." },
+                    { text: "Contactless cards can be hacked from miles away across international borders", isCorrect: false, rationale: "Contactless NFC range is extremely short (a few centimeters)." },
+                    { text: "Contactless cards require a built-in lithium-ion battery charged daily", isCorrect: false, rationale: "Contactless chips draw power wirelessly from the reader." },
+                    { text: "Contactless readers delete bank accounts automatically", isCorrect: false, rationale: "This is false." }
+                ]
+            },
+            {
+                question: "Which backing storage or data entry device is most similar in underlying wireless technology to contactless bank cards?",
+                options: [
+                    { text: "RFID systems", isCorrect: true, rationale: "Contactless payment cards use NFC (Near Field Communication), which is a specialized subset of RFID technology." },
+                    { text: "Magnetic tape reels", isCorrect: false, rationale: "Magnetic tape is sequential backing storage." },
+                    { text: "Flatbed document scanners", isCorrect: false, rationale: "Scanners are optical input devices." },
+                    { text: "Dot matrix printers", isCorrect: false, rationale: "Printers are output devices." }
+                ]
+            },
+            {
+                question: "Which summary best explains why card readers (Magnetic Stripe, Chip & PIN, and RFID/Contactless) are vital Direct Data Entry devices in modern commerce?",
+                options: [
+                    { text: "They eliminate manual typing errors, speed up transaction times at checkout, and offer varying levels of security for customer identification and payment", isCorrect: true, rationale: "Card readers automate secure identification and financial transactions efficiently without slow manual entry." },
+                    { text: "They are primarily used to compile high-level programming language code into machine code", isCorrect: false, rationale: "Code compilation is done by compilers." },
+                    { text: "They serve as high-resolution graphic display monitors for computer games", isCorrect: false, rationale: "Monitors display graphics." },
+                    { text: "They measure physical weather conditions in agricultural greenhouses", isCorrect: false, rationale: "Weather monitoring uses environmental sensors." }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        const questionCounter = document.getElementById("question-counter");
+        const scoreDisplay = document.getElementById("score-display");
+        const questionBox = document.getElementById("question-box");
+        const optionsContainer = document.getElementById("options-container");
+        const feedbackBox = document.getElementById("feedback-box");
+        const nextBtn = document.getElementById("next-btn");
+        const quizContainer = document.getElementById("quiz-container");
+        const resultsContainer = document.getElementById("results-container");
+        const finalScore = document.getElementById("final-score");
+
+        function loadQuestion() {
+            answered = false;
+            feedbackBox.classList.add("hidden");
+            nextBtn.classList.add("hidden");
+
+            const q = questions[currentQuestionIndex];
+            questionCounter.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            scoreDisplay.textContent = `Score: ${score}`;
+            questionBox.textContent = q.question;
+
+            optionsContainer.innerHTML = "";
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.textContent = opt.text;
+                btn.onclick = () => selectOption(idx);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedIndex) {
+            if (answered) return;
+            answered = true;
+
+            const q = questions[currentQuestionIndex];
+            const allOptionButtons = optionsContainer.children;
+
+            q.options.forEach((opt, idx) => {
+                allOptionButtons[idx].disabled = true;
+                if (opt.isCorrect) {
+                    allOptionButtons[idx].classList.add("correct");
+                } else if (idx === selectedIndex) {
+                    allOptionButtons[idx].classList.add("incorrect");
+                }
+            });
+
+            const selectedOpt = q.options[selectedIndex];
+            feedbackBox.classList.remove("hidden");
+            if (selectedOpt.isCorrect) {
+                score++;
+                scoreDisplay.textContent = `Score: ${score}`;
+                feedbackBox.className = "feedback-box correct-feedback";
+                feedbackBox.innerHTML = `<strong>Correct!</strong> ${selectedOpt.rationale}`;
+            } else {
+                feedbackBox.className = "feedback-box incorrect-feedback";
+                feedbackBox.innerHTML = `<strong>Incorrect.</strong> ${selectedOpt.rationale}`;
+            }
+
+            if (currentQuestionIndex < questions.length - 1) {
+                nextBtn.textContent = "Next Question";
+            } else {
+                nextBtn.textContent = "View Results";
+            }
+            nextBtn.classList.remove("hidden");
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                quizContainer.classList.add("hidden");
+                resultsContainer.classList.remove("hidden");
+                finalScore.textContent = `You scored ${score} out of ${questions.length}`;
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            resultsContainer.classList.add("hidden");
+            quizContainer.classList.remove("hidden");
+            loadQuestion();
+        }
+
+        // Initialize quiz on load
+        loadQuestion();
+    </script>
+</body>
+</html>
